@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
+from cryptography.hazmat.primitives import serialization
 
 from datetime import timedelta
 from datetime import datetime
@@ -11,19 +12,27 @@ import requests
 def return_snowflake_conn():
 
     user_id = Variable.get('snowflake_userid')
-    password = Variable.get('snowflake_password')
     account = Variable.get('snowflake_account')
     database = Variable.get('snowflake_database')
     warehouse = Variable.get('snowflake_warehouse')
 
+    private_key_str = Variable.get("snowflake_rsa_private_key")
+    passphrase = Variable.get("snowflake_rsa_private_key_passphrase")
+    # PEM string -> private key object
+    private_key = serialization.load_pem_private_key(
+        private_key_str.encode("utf-8"),
+        password=passphrase.encode("utf-8")
+    )
+
     # Establish a connection to Snowflake
     conn = snowflake.connector.connect(
         user=user_id,
-        password=password,
         account=account,  # Example: 'sfedu02-lvb17920'
+        authenticator="SNOWFLAKE_JWT",
+        private_key=private_key,
         warehouse=warehouse,
         database=database,
-        role="TRAINING_ROLE"
+        role="ACCOUNTADMIN"
     )
     # Create a cursor object
     return conn.cursor()
