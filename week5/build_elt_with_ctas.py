@@ -29,7 +29,7 @@ def return_snowflake_conn():
 
 @task
 def prep_data():
-    sql = """
+    sqls = """
     CREATE OR REPLACE TABLE raw.user_session_channel (
         userId int not NULL,
         sessionId varchar(32) primary key,
@@ -54,7 +54,8 @@ def prep_data():
     FROM @raw.blob_stage/session_timestamp.csv;
     """
     cur = return_snowflake_conn()
-    cur.execute(sql)
+    for sql in sqls.split(";"):
+        cur.execute(sql)
 
 
 @task
