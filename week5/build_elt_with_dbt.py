@@ -23,11 +23,12 @@ with DAG(
     default_args={
         "env": {
             "DBT_USER": conn.login,
-            "DBT_PASSWORD": conn.password,
             "DBT_ACCOUNT": conn.extra_dejson.get("account"),
-            "DBT_SCHEMA": conn.schema,
+            "DBT_PRIVATE_KEY_PASSPHRASE": conn.password,
+            "DBT_PRIVATE_KEY_PATH": "/opt/airflow/rsa_key.p8",
+            "DBT_SCHEMA": "analytics",
             "DBT_DATABASE": conn.extra_dejson.get("database"),
-            "DBT_ROLE": conn.extra_dejson.get("role"),
+            "DBT_ROLE": conn.extra_dejson.get("role", "ACCOUNTADMIN"),
             "DBT_WAREHOUSE": conn.extra_dejson.get("warehouse"),
             "DBT_TYPE": "snowflake"
         }
