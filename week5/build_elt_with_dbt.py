@@ -16,7 +16,7 @@ DBT_PROJECT_DIR = "/opt/airflow/dbt"
 conn = BaseHook.get_connection('snowflake_conn')
 with DAG(
     "BuildELT_dbt",
-    start_date=datetime(2025, 3, 19),
+    start_date=datetime(2026, 9, 15),
     description="A sample Airflow DAG to invoke dbt runs using a BashOperator",
     schedule=None,
     catchup=False,
